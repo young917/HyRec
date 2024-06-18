@@ -10,6 +10,7 @@ int main(int argc, char* argv[]){
     string inputpath;
     string outputdir;
     bool logflag = false;
+    bool dupflag = true;
     string dataname = "";
     string inputdir = "";
     string algoname = "";
@@ -19,9 +20,10 @@ int main(int argc, char* argv[]){
         if(input.compare("--inputpath") == 0) inputpath = argv[++i];
         else if(input.compare("--outputdir") == 0) outputdir = argv[++i];
         else if(input.compare("--log") == 0) logflag = true;
+        else if(input.compare("--dupflag") == 0) dupflag = true; // dupflag true: accept duplicate ; false: reject duplicate
     }
     HyperGraph *graph;
-    graph = new HyperGraph(inputpath, dataname);
+    graph = new HyperGraph(inputpath, dataname, dupflag);
     
     make_directory_by_name(outputdir);
     cout << outputdir << endl;

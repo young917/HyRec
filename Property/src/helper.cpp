@@ -19,10 +19,6 @@ Helper::Helper(set<int> subhypergraph, HyperGraph *graph, string outputdir, stri
         }
     }
 
-    if (cch_flag){
-        egonet_node2hedge.resize(graph->number_of_nodes);
-    }
-
     // update by subhypergraph
     if ((int)subhypergraph.size() > 0){
         set<int> nodeset;
@@ -42,48 +38,48 @@ Helper::Helper(set<int> subhypergraph, HyperGraph *graph, string outputdir, stri
 }
 
 void Helper::get_clustering_coef_hedge(void){
-    set<string> check;
+    vector<bool> check_hedges;
+    vector<bool> check_tmp;
+    check_hedges.resize(graph->number_of_hedges, false);
+    check_tmp.resize(graph->number_of_hedges, false);
+    // set<int> check_hedges;
 
     string writeFile2 = outputdir + "clusteringcoef_hedge.txt";
     ofstream resultFile2(writeFile2.c_str(), fstream::out);
 
-    int step = max((int)(graph->number_of_nodes / 100), 1);
     for (int v = 0; v < (int)node_masking.size() ; v++){
         int vdeg = (int)graph->node2hyperedge[v].size();
-        check.clear();
+        // check_pair.clear();
+        // check_hedges.clear();
+        fill(check_hedges.begin(), check_hedges.end(), false);
+
         for (int nhi = 0 ; nhi < vdeg ; nhi++){
             int nh = graph->node2hyperedge[v][nhi];
             if (hypergraph_masking[nh]){
-                int nhsize = (int)graph->hyperedge2node[nh].size();
-                for (int nvi = 0 ; nvi < nhsize ; nvi++){
-                    int nv =  graph->hyperedge2node[nh][nvi];
-                    egonet_node2hedge[nv].push_back(nh);
-                }
+                check_hedges[nh] = true;
             }
         }
         double cc = 0.0; // number of connected neighbor pairs
-        for (int nv = 0 ; nv < graph->number_of_nodes ; nv++){
-            if (nv == v){
-                egonet_node2hedge[nv].clear();
+        for (int h=0 ; h < graph->number_of_hedges ; h++){
+            if (!check_hedges[h]){
                 continue;
             }
-            int nv_deg = (int)egonet_node2hedge[nv].size();
-            for (int nhi = 0 ; nhi < nv_deg ; nhi++){
-                for (int nhj = nhi + 1 ; nhj < nv_deg ; nhj++){
-                    int hi = egonet_node2hedge[nv][nhi];
-                    int hj = egonet_node2hedge[nv][nhj];
-                    string pairkey;
-                    if (hi == hj){
-                        continue;
+            fill(check_tmp.begin(), check_tmp.end(), false);
+            int hsize = (int)graph->hyperedge2node[h].size();
+            for (int si=0 ; si<hsize ; si++){
+                int nv = graph->hyperedge2node[h][si];
+                int nv_deg = (int)graph->node2hyperedge[nv].size();
+                for (int di=0 ; di<nv_deg ; di++){
+                    int nh = graph->node2hyperedge[nv][di];
+                    if (check_hedges[nh]){
+                        if ((h < nh) && (!check_tmp[nh])){
+                            check_tmp[nh] = true;
+                            cc += 1;
+                        }
                     }
-                    if (hi < hj) pairkey = to_string(hi) + "_" + to_string(hj);
-                    else pairkey = to_string(hj) + "_" + to_string(hi);
-                    check.insert(pairkey);
                 }
             }
-            egonet_node2hedge[nv].clear();
         }
-        cc = (float)check.size();
         resultFile2 << to_string(vdeg) << "," << to_string(cc) << endl;
     }
     resultFile2.close();

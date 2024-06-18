@@ -107,6 +107,11 @@ void HelperDist::get_intersection_size_dist(void){
         resultFile << to_string(elem.first) << "," << to_string(p) << endl;
     }
     resultFile.close();
+
+    string writeFile_tot = outputdir + its_outname + "_total.txt";
+    ofstream resultTFile(writeFile_tot.c_str(), fstream::out);
+    resultTFile << to_string(total) << endl;
+    resultTFile.close();
 }
 
 void HelperDist::get_degree_dist(void){
@@ -124,6 +129,11 @@ void HelperDist::get_degree_dist(void){
         resultFile << to_string(elem.first) << "," << to_string(p) << endl;
     }
     resultFile.close();
+    
+    string writeFile_tot = outputdir + degree_outname + "_total.txt";
+    ofstream resultTFile(writeFile_tot.c_str(), fstream::out);
+    resultTFile << to_string(this->number_of_nodes) << endl;
+    resultTFile.close();
 }
 
 void HelperDist::get_pairdegree_dist(void){
@@ -135,22 +145,31 @@ void HelperDist::get_pairdegree_dist(void){
         total++;        
     }
     string writeFile = outputdir + pairdeg_outname + ".txt";
-    ofstream resultFile(writeFile.c_str(), fstream::out | fstream::app);
+    ofstream resultFile(writeFile.c_str(), fstream::out); //  | fstream::app
     for (auto elem : pairdegree_dist){
         double p = ((double)elem.second / (double)total);
         resultFile << to_string(elem.first) << "," << to_string(p) << endl;
     }
     resultFile.close();
+    string writeFile_tot = outputdir + pairdeg_outname + "_total.txt";
+    ofstream resultTFile(writeFile_tot.c_str(), fstream::out);
+    resultTFile << to_string(total) << endl;
+    resultTFile.close();
 }
 
 void HelperDist::get_size_dist(void){
     string writeFile = outputdir + size_outname + ".txt";
-    ofstream resultFile(writeFile.c_str(), fstream::out | fstream::app);
+    ofstream resultFile(writeFile.c_str(), fstream::out);
     for (auto elem : size_dist){
         double p = ((double)elem.second / (double)this->number_of_hedges);
         resultFile << to_string(elem.first) << "," << to_string(p) << endl;
     }
     resultFile.close();
+    
+    string writeFile_tot = outputdir + size_outname + "_total.txt";
+    ofstream resultTFile(writeFile_tot.c_str(), fstream::out);
+    resultTFile << to_string(this->number_of_hedges) << endl;
+    resultTFile.close();
 }
 
 void HelperDist::update(set<int> deltaset, HyperGraph *graph){

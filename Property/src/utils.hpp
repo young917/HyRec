@@ -106,7 +106,8 @@ inline bool file_exist (const std::string& name) {
 }
 
 inline string make_directory (vector<string> args){
-    string outputdir = "./results/";
+    // string outputdir = "/home/dmlab/minyoung/HypergraphProperty/results/";
+    string outputdir = "/home/dmlab/minyoung/HypergraphProperty/";
     for (int i = 0 ; i < (int)args.size() ; i++){
         outputdir += args[i] + "/";
         mkdir(outputdir.c_str(), 0776);

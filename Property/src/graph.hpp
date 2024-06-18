@@ -29,7 +29,7 @@ public:
     unordered_map<int, string> edgename;
     bool exist_edgename;
 
-    HyperGraph(string inputpath, string dataname);
+    HyperGraph(string inputpath, string dataname, bool dupflag);
     vector<vector<int>> get_incidence_matrix();
 };
 #endif

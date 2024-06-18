@@ -1,12 +1,11 @@
 #include "graph.hpp"
 
-HyperGraph::HyperGraph(string inputpath, string dataname){
+HyperGraph::HyperGraph(string inputpath, string dataname, bool dupflag){
     string path;
     this->inputpath = inputpath;
     this->dataname = dataname;
     
     cout << path << endl;
-    // path = inputpath + dataname + ".txt";
     path = inputpath + ".txt";
     this->exist_edgename = false;
     
@@ -30,7 +29,6 @@ HyperGraph::HyperGraph(string inputpath, string dataname){
             }
             int node_index = nodename2index[nodes[i]];
             token_set.insert(node_index);
-            this->node2hyperedge[node_index].push_back(num_hyperedge);
         }
         for (int v : token_set){
             tokens.push_back(v);
@@ -40,12 +38,16 @@ HyperGraph::HyperGraph(string inputpath, string dataname){
         for (int v : tokens){
             token_str += to_string(v) + "_";
         }
-        // avoid duplicated
-        if (hyperedge2index.find(token_str) == hyperedge2index.end()){
+        // add hyperedges
+        if (dupflag || (hyperedge2index.find(token_str) == hyperedge2index.end())){
             hyperedge2index[token_str] = num_hyperedge;
             this->hyperedge2node.push_back(tokens);
             if (this->exist_edgename){
                 edgename[num_hyperedge] = ename;
+            }
+            for (int i = 0; i < (int)tokens.size(); i++){
+                int node_index = tokens[i];
+                this->node2hyperedge[node_index].push_back(num_hyperedge);
             }
             num_hyperedge++;
         }
