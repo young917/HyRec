@@ -1,0 +1,2 @@
+AlgoName,AlgoOpt,deg,sz,pd,its,cch,dst,ov,sv,eff,avg
+ext_HyperK,0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
