@@ -7,6 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os
 import pickle
+import argparse
 from utils import *
 
 plt.rcParams.update({'font.size': 13})
@@ -72,28 +73,32 @@ color = {
 # -------------------------------------------------------------------------------------------------------------------------
 distset = ["degree", "size", "pairdeg", "intersection", "sv", 
            "clusteringcoef_hedge", "density_dist", "overlapness_dist"]
-dataname = "email-Eu-full"
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataname", type=str)
+args = parser.parse_args()
+
 namelist = [("answer", -1)]
 namelist.append(("hyperlap", -1))    
 namelist.append(("hypercl", -1))
-if os.path.isfile("../results/hyperpa/{}/sv.txt".format(dataname)):
+if os.path.isfile("../results/hyperpa/{}/sv.txt".format(args.dataname)):
     namelist.append(("hyperpa", -1))
 for target in ["hyperff", "thera", "HyperK"]:
     with open("ablation_result/{}.pkl".format(target), "rb") as f:
         result = pickle.load(f)
-    if dataname in result:
-        namelist.append((target, result[dataname]))
+    if args.dataname in result:
+        namelist.append((target, result[args.dataname]))
 
 for distname in distset:
-    outputpath = "figure/" + dataname + "/"
+    outputpath = "figure/" + args.dataname + "/"
     if os.path.isdir(outputpath) is False:
         os.makedirs(outputpath)
     outputpath += distname + ".jpg"
 
     plt.figure(figsize=(5.5,5), dpi=100)
     for (name, idx) in namelist:
-        print(dataname, name, idx)
-        ret, dist = read_properties(dataname, name, idx)
+        print(args.dataname, name, idx)
+        ret, dist = read_properties(args.dataname, name, idx)
         if name == "answer":
             ret_answer = ret
             dist_answer = dist 
