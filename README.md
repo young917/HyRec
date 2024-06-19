@@ -5,20 +5,38 @@ We provide datasets and source code for (1) **Discoveries** of log-logistic or p
 ```
 # File Organization
 |__ Property/                   
-    |__ dataset/                # real-world hypergraph: i-th line indicates i-th hypergraph where included nodes are 
-    |__ analyze/                # used for plotting discoveries or evaluation of hypergraph generators
-    |__ src/                    # used for computing nine properties
+    |__ dataset/                # Hypergraphs: i-th line indicates the nodes included in the i-th hypergraph 
+    |__ rawdata/                # Location of raw data downloaded from https://www.cs.cornell.edu/~arb/data/
+    |__ analyze_data/           # Used for analyzing discoveries in real-world hypergraphs
+    |__ analyze_fit/            # Used for evaluating hypergraph generators' fit to real-world hypergraphs
+    |__ analyze_extrapolation/  # Used for evaluating hypergraph generators' extrapolation of real-world hypergraphs
+    |__ src/                    # Source code for computing nine properties
+    |__ run/                    # Command files for computing nine properties and evaluating generators
+|
 |__ Model/                      
-    |__ input/                  # real-world hypergraph same as the above but in different format: i-th line indicates {column index} {row index} {value} of incidence matrix
-    |__ data/                   # save singular values of real-world hypergraphs
-    |__ *.py                    # used for HyperK and SingFit
-
+    |__ input/                  # Real-world hypergraphs in a different format: each line indicates {column index} {row index} {value} of the incidence matrix
+        |__ svdata/             # Pre-computed singular values from real-world hypergraphs
+    |__ run/                    # Used for training HyperK in search spaces
+    |__ run_full/               # Used for generating hypergraphs from trained HyperK
+    |__ run_half/               # Used for extrapolating hypergraphs from trained HyperK
+    |__ *.py                    # Source code for HyperK and SingFit
+    |__ saved_model.tar.gz      # Best-performing models for fitting and extrapolating
 ```
+
+## (0) Data Preprocessing
+The datasets are downloaded from [here](https://www.cs.cornell.edu/~arb/data/). After placing these datasets in the `Property/rawdata/` directory, we preprocess them using the scripts in `Property/dataset/`:
+
+* `preprocess.py`: Preprocesses hypergraphs and saves them in the Property/dataset/ directory. These are used for computing nine properties.
+* `preprocess_half.py`: Preprocesses hypergraphs by including only time-sorted hyperedges until the number of nodes is half of the original. These are saved in the Property/dataset/ directory for the extrapolation task.
+* `preprocess_kron.py`: Reads preprocessed hypergraphs and saves them in a different format in the Model/input/ directory.
+
+Even though you can obtain all the datasets we used by following the provided preprocessing code, we also provide the complete training datasets for both fit and extrapolation from eleven real-world hypergraphs in the `Model/input/` directory. Additionally, we include the real-world hypergraph and generated ones via five baselines using the email-Eu dataset as an example.
+
 
 ## (1) Discoveries
 
-You can run *8* discoveries with thirteen datasets at the same time. The outputs will be saved in Property/results/answer/[data name] directory.
-As following `run_discovery.sh`,
+You can run *8* discoveries with eleven datasets at the same time. The outputs will be saved in `Property/results/answer/[data name]` directory.
+As following `run/run.sh`,
 ```
 cd Property/
 make
@@ -82,6 +100,45 @@ You can also evaluate the generators by rankings and z-scores by `Property/analy
 
 - - -
 
+## Trained Model
+
+You can download best-performing models by downloading `Model/saved_model.tar.gz` through git LFS.
+The configures of these trained models are as follows:
+
+* Fitting to Real-world Hypergraphs
+
+| Data | (N_1, M_1) | K | Learning Rate | Number of Tie | Size Lambda | Degree Lambda |
+| --- | --- | --- | --- | --- | --- | --- | 
+| email-Enron | (3, 5) | 6 | 0.010 | 2 | 0.01 | 0.0010 |
+| email-Eu | (4, 8) | 6 | 0.008 | 3 | 0.00 | 0.0010 |
+| contact-high | (4, 12) | 5 | 0.010 | 2 | 1.50 | 0.0000 |
+| contact-primary | (4, 19) | 4 | 0.010 | 2 | 0.60 | 0.0001 |
+| NDC-classes | (5, 9) | 5 | 0.008 | 2 | 0.10 | 0.0000 |
+| NDC-substances | (18, 49) | 3 | 0.005 | 2 | 0.50 | 0.0010 |
+| tags-ubuntu | (8, 23) | 4 | 0.010 | 2 | 2.00 | 0.0100 |
+| tags-math | (7, 31) | 4 | 0.005 | 2 | 1.00 | 0.0010 |
+| threads-ubuntu | (8, 8) | 6 | 0.010 | 2 | 0.50 | 0.1000 |
+| threads-math | (12, 15) | 5 | 0.003 | 2 | 1.00 | 0.0100 |
+| coauth-geology | (6, 6) | 8 | 0.005 | 2 | 0.00 | 0.0010 |
+
+* Extrapolating Real-world Hypergraphs
+  
+| Data | (N_1, M_1) | K | Learning Rate | Number of Tie | Size Lambda | Degree Lambda |
+| --- | --- | --- | --- | --- | --- | --- | 
+| email-Enron-half | (3, 4) | 5 | 0.010 | 2 | 1.00 | 0.0010 |
+| email-Eu-half | (4, 8) | 5 | 0.010 | 2 | 1.50 | 0.0010 |
+| contact-high-half | (4, 12) | 4 | 0.010 | 2 | 1.00 | 0.0010 |
+| contact-primary-half | (4, 18) | 4 | 0.010 | 2 | 1.00 | 0.0000 |
+| NDC-classes-half | (5, 9) | 4 | 0.001 | 2 | 1.00 | 0.0001 |
+| NDC-substances-half | (5, 8) | 5 | 0.010 | 2 | 0.01 | 0.0010 |
+| tags-ubuntu-half | (3, 4) | 7 | 0.010 | 2 | 1.00 | 0.0100 |
+| tags-math-half | (4, 8) | 5 | 0.010 | 2 | 1.00 | 0.0100 |
+| threads-ubuntu-half | (5, 5) | 7 | 0.001 | 2 | 0.50 | 2.0000 |
+| threads-math-half | (18, 22) | 4 | 0.010 | 2 | 1.00 | 0.5000 |
+| coauth-geology-half | (7, 7) | 7 | 0.100 | 2 | 0.00 | 0.0000 |
+
+
 ## Environment
 
 The environment of running codes is specified in `requirements.txt`
+Use RTX2080Ti and AMD Ryzen 7 3700X.
