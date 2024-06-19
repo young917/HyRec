@@ -35,17 +35,29 @@ Even though you can obtain all the datasets we used by following the provided pr
 
 ## (1) Discoveries
 
-You can run *8* discoveries with eleven datasets at the same time. The outputs will be saved in `Property/results/answer/[data name]` directory.
-As following `run/run.sh`,
+You can analyze *eight* discoveries:
+* D1. Power-law distributions in node pair degrees, intersection sizes, and singular values.
+* D2. Log-logistic distributions in node degrees and hyperedge sizes.
+* D3. Power-law patterns in clustering coefficients, egonet density, and overlapness.
+
+By following the script `Property/run/run.sh`, eight properties are computed, and the outputs will be saved in the `Property/results/answer/[data name]` directory.
+
 ```
 cd Property/
 make
-./bin/Sampling --inputpath ../dataset/${data name} --outputdir ./results/answer/${data name}/
+./bin/Evaluation --inputpath ./dataset/${data name} --outputdir ./results/answer/${data name}/ --dupflag
 cd src
-python calculation_helper.py --inputpath ../../dataset/${data name} --outputdir ../results/answer/${data name}/ --sv
+python calculation_helper.py --inputpath ../dataset/${data name} --outputdir ../results/answer/${data name}/ --sv --dupflag
+python powerlaw_test.py --dataname ${data name} --test_type pairdeg
+python powerlaw_test.py --dataname ${data name} --test_type intersection
+python powerlaw_test.py --dataname ${data name} --test_type sv
 ```
 
-Then, you can plot the distributions with R2 scores and slopes as following `analyze/Analysis-Data.ipynb`,
+You can then analyze these properties visually and statistically:
+
+* `Property/analyze_data/plot_discoveries.py`: Plots eight properties in log-log scale and checks the uniformity of slopes within the same domain.
+* `Property/analyze_data/stats.py`: Checks log-likelihood ratios for fitting to power-law distributions, and computes R² scores and slopes of linear regression.
+
 
 ## (2) HyperK and SingFit
 
@@ -53,20 +65,26 @@ We provide source code for training HyperK using SingFit
 
 ### How to Train HyperK
 
-You can *train* HyperK by following `Model/run/run_{small, large}.sh`,
+You can **train** HyperK by following the instructions in `Model/run/run_{half, full}.sh`,
 ```
 python main_sv.py train --dataset {data name}
                         --device {cuda number}
-                        --gen_at_once
                         --numparam {parameter count constraint}
                         --lr {learning rate}
-                        --approx {number of tie in training} --evalapprox {number of tie in generation}
                         --annealrate {annealing rate for tuning temperature in gumbel softmax}
+                        --num_tie {number of tie in training}
+                        --sizelambda {lambda for size loss}
+                        --deglambda {lambda for degree loss}
 ```
+To **generate (or extrapolate)** a hypergraph using the trained HyperK, follow the instructions in `Model/run_full/run_gen.sh` (or `Model/run_half/run_extrapolate.sh`):
 
-You can *generate (or extrapolate)* a hypergraph using the trained HyperK by following `Model/run/run_predict_{small, large}.sh`,
 ```
-python main.py eval --dataset {target_data_name} --load_path {trained_model_path} --gen_at_once
+python main.py eval --dataset {target data name}
+                    --device {cuda number}
+                    --load_path {trained model path}
+                    --save_path {save path for outputs}
+                    --save_iter {number of generating}
+                    --extflag # used when extrapolating
 ```
 
 ### How to Evaluate HyperK
@@ -100,10 +118,10 @@ You can also evaluate the generators by rankings and z-scores by `Property/analy
 
 - - -
 
-## Trained Model
+## Pre-trained Model
 
 You can download best-performing models by downloading `Model/saved_model.tar.gz` through git LFS.
-The configures of these trained models are as follows:
+The configurations of these trained models are as follows:
 
 * Fitting to Real-world Hypergraphs
 
@@ -140,5 +158,5 @@ The configures of these trained models are as follows:
 
 ## Environment
 
-The environment of running codes is specified in `requirements.txt`
-Use RTX2080Ti and AMD Ryzen 7 3700X.
+The environment for running the codes is specified in `requirements.txt`
+We use RTX2080Ti and AMD Ryzen 7 3700X.
