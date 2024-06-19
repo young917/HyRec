@@ -7,6 +7,7 @@ import matplotlib
 import pickle
 import matplotlib.pyplot as plt
 import os
+import argparse
 from utils import *
 
 plt.rcParams.update({'font.size': 13})
@@ -137,21 +138,24 @@ def halfindex_2_fullindex(dataname, index):
             
     return ret
 
-dataname = "email-Eu-half"
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataname", type=str, default="email-Eu-half", help="should be ended by half")
+args = parser.parse_args()
+
 namelist = [("answer", -1)]
-if os.path.isfile("../results/hyperpa/{}/effdiameter.txt".format(dataname)):
+if os.path.isfile("../results/hyperpa/{}/effdiameter.txt".format(args.dataname)):
     namelist.append(("hyperpa", -1))
     
 for target in ["hyperff", "thera"]:
     with open("ablation_result/{}.pkl".format(target), "rb") as f:
         result = pickle.load(f)
-    if dataname in result:
-        namelist.append((target, result[dataname]))
+    if args.dataname in result:
+        namelist.append((target, result[args.dataname]))
 for target in ["HyperK"]:
     with open("ablation_result/{}.pkl".format(target), "rb") as f:
         result = pickle.load(f)
-    if dataname in result:
-        namelist.append(("ext_" + target, result[dataname]))
+    if args.dataname in result:
+        namelist.append(("ext_" + target, result[args.dataname]))
 
 distset = ["degree", "size", "pairdeg", "intersection", "sv", 
            "clusteringcoef_hedge", "density_dist", "overlapness_dist"]
@@ -161,8 +165,8 @@ for distname in distset:
     min_y = 1e+12
     max_y = 0
 
-    for di, cur_dataname in enumerate([fulldatalist[dataname], dataname]):
-        outputpath = "./figure/" + dataname + "/"
+    for di, cur_dataname in enumerate([fulldatalist[args.dataname], args.dataname]):
+        outputpath = "./figure/" + args.dataname + "/"
         if os.path.isdir(outputpath) is False:
             os.makedirs(outputpath)
         if di == 1:
@@ -177,16 +181,16 @@ for distname in distset:
             (name, idx) = item
                 
             if di == 1:
-                ret, dist = read_properties(dataname, name, idx)
+                ret, dist = read_properties(args.dataname, name, idx)
             else:
                 if name in ["hyperpa", "hyperff", "thera"]:
-                    ret, dist = read_properties(dataname, "ext_" + name, idx)
+                    ret, dist = read_properties(args.dataname, "ext_" + name, idx)
                 elif name == "ext_HyperK":
-                    full_dataname = fulldatalist[dataname]
-                    full_idx = halfindex_2_fullindex(dataname, idx)
+                    full_dataname = fulldatalist[args.dataname]
+                    full_idx = halfindex_2_fullindex(args.dataname, idx)
                     ret, dist = read_properties(full_dataname, name, full_idx)
                 else:
-                    full_dataname = fulldatalist[dataname]
+                    full_dataname = fulldatalist[args.dataname]
                     ret, dist = read_properties(full_dataname, name, idx)
                 
             if name == "answer":
