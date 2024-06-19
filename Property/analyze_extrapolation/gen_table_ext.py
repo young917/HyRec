@@ -64,7 +64,7 @@ def get_baseline_list(dataname):
 def make_dist_table(dataname, outputdir):
     half_dataname = full2half[dataname]
     property_list = ["degree", "size", "pairdeg", "intersection","sv", 
-                 "clusteringcoef_hedge", "density_dist", "overlapness_dist", "effdiam"] #, "mod"]
+                 "clusteringcoef_hedge", "density_dist", "overlapness_dist", "effdiam"]
     
     namelist = get_baseline_list(dataname)
     print(namelist)
