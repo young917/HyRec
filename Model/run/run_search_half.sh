@@ -4,7 +4,7 @@ lrset=("0.001" "0.003" "0.005" "0.008" "0.01")
 szlambdaset=("0.0" "0.01" "0.1" "0.5" "1.0" "1.5" "2.0")
 deglambdaset=("0.0" "0.0001" "0.001" "0.01" "0.1" "0.5" "1.0" "2.0")
 paramset=("50" "100" "1000")
-tieset=("2" "3" "4")
+unitset=("2" "3" "4")
 cuda=0
 
 
@@ -13,7 +13,7 @@ for an in ${anset[@]}
 do
     for lr in ${lrset[@]}
     do
-        for tie in ${tieset[@]}
+        for unit in ${unitset[@]}
         do
             for sld in ${szlambdaset[@]}
             do
@@ -23,7 +23,7 @@ do
                     do
                         for pr in ${paramset[@]}
                         do
-                            python main.py train --device ${cuda} --dataset ${dataname} --numparam ${pr} --lr ${lr} --annealrate ${an} --num_tie ${tie} --sizelambda ${sld} --deglambda ${dld} --noeval
+                            python main.py train --device ${cuda} --dataset ${dataname} --numparam ${pr} --lr ${lr} --annealrate ${an} --num_unit ${unit} --sizelambda ${sld} --deglambda ${dld} --noeval
                         done
                     done
                 done
