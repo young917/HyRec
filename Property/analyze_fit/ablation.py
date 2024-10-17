@@ -70,12 +70,12 @@ def get_directories(dataname, ablation_target):
                     count += 1
         assert count <= len(bset) * len(pset) * len(cset)
 
-    elif ablation_target == "HyperK":
-        d = pd.read_csv("../results/HyperK/{}/output_list.txt".format(dataname))
+    elif ablation_target == "HyRec":
+        d = pd.read_csv("../results/HyRec/{}/output_list.txt".format(dataname))
         for irow, row in d.iterrows():
             opt = row["modelIndex"]
-            if os.path.isfile("../results/HyperK/{}/{}/effdiameter.txt".format(dataname, opt)):
-                namelist.append(("HyperK", int(opt)))
+            if os.path.isfile("../results/HyRec/{}/{}/effdiameter.txt".format(dataname, opt)):
+                namelist.append(("HyRec", int(opt)))
     
     return namelist
 
@@ -132,7 +132,7 @@ def make_ablation_table(dataname, ablation_target):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataname", type=str)
-    parser.add_argument("--ablation_target", type=str, help="[hyperff, thera, HyperK]")
+    parser.add_argument("--ablation_target", type=str, help="[hyperff, thera, HyRec]")
     args = parser.parse_args()
 
     outputpath = make_ablation_table(args.dataname, args.ablation_target)
