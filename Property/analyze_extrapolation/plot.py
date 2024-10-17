@@ -59,7 +59,7 @@ ylabeldict = {
 color = {
     1: {
         "answer": "#505050",
-        "ext_HyperK": "#66a61e",
+        "ext_HyRec": "#66a61e",
         "hyperpa": "#975a97",
         "thera": "#d37601",
         "hyperff": "#9d1641"
@@ -67,7 +67,7 @@ color = {
     
     0: {
         "answer": "black",
-        "ext_HyperK": "#4daf4a",
+        "ext_HyRec": "#4daf4a",
         "hyperpa": "#984ea3",
         "thera": "#ff7f00",
         "hyperff": "#e41a1c"
@@ -120,7 +120,7 @@ def halfindex_2_fullindex(dataname, index):
     assert "half" in dataname
 
     check_tmp = {}
-    d = pd.read_csv("../results/ext_HyperK/{}/output_list_half.txt".format(dataname))
+    d = pd.read_csv("../results/ext_HyRec/{}/output_list_half.txt".format(dataname))
     for irow, row in d.iterrows():
         model_index = row["modelIndex"]
         path = row["modelpath"].split("/")[-2]
@@ -128,7 +128,7 @@ def halfindex_2_fullindex(dataname, index):
         
     ret = -1
     fulldata =  fulldatalist[dataname]
-    d = pd.read_csv("../results/ext_HyperK/{}/output_list_ext.txt".format(fulldata))
+    d = pd.read_csv("../results/ext_HyRec/{}/output_list_ext.txt".format(fulldata))
     for irow, row in d.iterrows():
         model_index = row["modelIndex"]
         path = row["modelpath"].split("/")[-3]
@@ -151,7 +151,7 @@ for target in ["hyperff", "thera"]:
         result = pickle.load(f)
     if args.dataname in result:
         namelist.append((target, result[args.dataname]))
-for target in ["HyperK"]:
+for target in ["HyRec"]:
     with open("ablation_result/{}.pkl".format(target), "rb") as f:
         result = pickle.load(f)
     if args.dataname in result:
@@ -185,7 +185,7 @@ for distname in distset:
             else:
                 if name in ["hyperpa", "hyperff", "thera"]:
                     ret, dist = read_properties(args.dataname, "ext_" + name, idx)
-                elif name == "ext_HyperK":
+                elif name == "ext_HyRec":
                     full_dataname = fulldatalist[args.dataname]
                     full_idx = halfindex_2_fullindex(args.dataname, idx)
                     ret, dist = read_properties(full_dataname, name, full_idx)
@@ -212,7 +212,7 @@ for distname in distset:
             
             if name in ["answer"]:
                 plt.scatter(x, y, label=name + "_" + str(di), c=color[di][name], alpha=alphadict[di], s=240, marker=markerdict[di], zorder=2)
-            elif name != "ext_HyperK":
+            elif name != "ext_HyRec":
                 plt.scatter(x, y, label=name + "_" + str(di), c=color[di][name], alpha=alphadict[di], s=100, marker=markerdict[di], zorder=2)
             else:
                 plt.scatter(x, y, label=name + "_" + str(di), c=color[di][name], alpha=1.0, s= 100, marker=markerdict[di], zorder=2)
