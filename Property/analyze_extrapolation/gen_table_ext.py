@@ -54,7 +54,7 @@ def get_baseline_list(dataname):
         with open("ablation_result/{}.pkl".format(target), "rb") as f:
             result = pickle.load(f)
         namelist.append(("ext_" + target, result[half_dataname]))
-    for target in ["HyperK"]:
+    for target in ["HyRec"]:
         with open("ablation_result/{}.pkl".format(target), "rb") as f:
             result = pickle.load(f)
         namelist.append(("ext_" + target, result[half_dataname]))
