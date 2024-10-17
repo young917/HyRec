@@ -22,7 +22,7 @@ def get_baseline_list(dataname):
     if os.path.isfile("../results/hyperpa/{}/effdiameter.txt".format(dataname)):
         namelist.append(("hyperpa", -1))
 
-    for target in ["hyperff", "thera", "HyperK"]:
+    for target in ["hyperff", "thera", "HyRec"]:
         with open("ablation_result/{}.pkl".format(target), "rb") as f:
             result = pickle.load(f)
         namelist.append((target, result[dataname]))
