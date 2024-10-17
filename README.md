@@ -67,7 +67,7 @@ We provide source code for training HyRec using SingFit
 
 You can **train** HyRec by following the instructions in `Model/run/run_{half, full}.sh`,
 ```
-python main_sv.py train --dataset {data name}
+python main.py train --dataset {data name}
                         --device {cuda number}
                         --numparam {parameter count constraint}
                         --lr {learning rate}
