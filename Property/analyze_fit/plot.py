@@ -62,7 +62,7 @@ ylabeldict = {
 color = {
     "answer": "black",
     
-    "HyperK": "#4daf4a",
+    "HyRec": "#4daf4a",
     "hypercl": "#e6ab02",
     "hyperlap": "#377eb8",
     "hyperpa": "#984ea3",
@@ -83,7 +83,7 @@ namelist.append(("hyperlap", -1))
 namelist.append(("hypercl", -1))
 if os.path.isfile("../results/hyperpa/{}/sv.txt".format(args.dataname)):
     namelist.append(("hyperpa", -1))
-for target in ["hyperff", "thera", "HyperK"]:
+for target in ["hyperff", "thera", "HyRec"]:
     with open("ablation_result/{}.pkl".format(target), "rb") as f:
         result = pickle.load(f)
     if args.dataname in result:
@@ -112,7 +112,7 @@ for distname in distset:
         
         if name in ["answer"]:
             plt.scatter(x, y, label=name, c=color[name], alpha=0.6, s=240)
-        elif name != "HyperK":
+        elif name != "HyRec":
             plt.scatter(x, y, label=name, c=color[name], alpha=0.7, s=100)
         else:
             plt.scatter(x, y, label=name, c=color[name], alpha=1.0, s= 100)
