@@ -15,7 +15,7 @@ import torch.nn.functional as F
 from collections import defaultdict
         
 class SingFit(nn.Module):
-    def __init__(self, init_row, init_col, k, device, sq_sum, num_tie=1, save_path=None):
+    def __init__(self, init_row, init_col, k, device, sq_sum, num_unit=1, save_path=None):
         super(SingFit, self).__init__()
         self.init_row, self.init_col = init_row, init_col        
         self.k = k
@@ -32,21 +32,21 @@ class SingFit(nn.Module):
         self.save_path = save_path
         
         self.eps=1e-20
-        self.num_tie = num_tie
+        self.num_unit = num_unit
         
         self.intermediate_klist = []
         self.intermediate_rowbase_list = []
         self.intermediate_colbase_list = []
-        remain = self.k % self.num_tie
-        for i in range(self.num_tie):
+        remain = self.k % self.num_unit
+        for i in range(self.num_unit):
             if remain > 0:
-                k = self.k // self.num_tie + 1
+                k = self.k // self.num_unit + 1
                 remain -= 1
                 self.intermediate_klist.append(k)
             else:
-                k = self.k // self.num_tie
+                k = self.k // self.num_unit
                 self.intermediate_klist.append(k)
-        for i in range(self.num_tie):
+        for i in range(self.num_unit):
             cur_k = self.intermediate_klist[i]
             self.intermediate_rowbase_list.append(self.init_row ** ((cur_k-1) - torch.arange(cur_k)))
             self.intermediate_colbase_list.append(self.init_col ** ((cur_k-1) - torch.arange(cur_k)))
@@ -56,22 +56,22 @@ class SingFit(nn.Module):
         initmat_scaled = initmat / torch.sqrt(torch.sum(torch.square(initmat)))
         
         mat = initmat_scaled.view(self.init_row, self.init_col)
-        for i in range(1, self.k // self.num_tie):
+        for i in range(1, self.k // self.num_unit):
             mat = torch.kron(mat, initmat_scaled.view(self.init_row, self.init_col))
         
-        remain = self.k % self.num_tie
+        remain = self.k % self.num_unit
         expected_sv = None
         expected_size = None
         expected_degree = None
-        for i in range(self.num_tie):
+        for i in range(self.num_unit):
             if remain > 0:
                 imat = torch.kron(mat, initmat_scaled.view(self.init_row, self.init_col))
                 remain -= 1
-                k = self.k // self.num_tie + 1
+                k = self.k // self.num_unit + 1
                 assert k == self.intermediate_klist[i]
                 imat = imat * (self.multi ** (1. / self.k * k))
             else:
-                k = self.k // self.num_tie
+                k = self.k // self.num_unit
                 assert k == self.intermediate_klist[i]
                 imat = mat * (self.multi ** (1. / self.k * k))
                 
@@ -114,7 +114,7 @@ class SingFit(nn.Module):
     
     def intermediate_sample(self, batch_size):
         self.save_sample = {}
-        for i in range(self.num_tie):
+        for i in range(self.num_unit):
             cur_k = self.intermediate_klist[i]
             cur_num_row = self.init_row ** cur_k
             cur_num_col = self.init_col ** cur_k
@@ -156,7 +156,7 @@ class SingFit(nn.Module):
     
     def sample(self):
         until_rows, until_cols, until_vals = self.save_sample[0].row, self.save_sample[0].col, self.save_sample[0].data
-        for ai in tqdm(range(1, self.num_tie)):
+        for ai in tqdm(range(1, self.num_unit)):
             cur_k = self.intermediate_klist[ai]
             next_rows, next_cols, next_vals = [], [], []
 
@@ -200,7 +200,7 @@ class SingFit(nn.Module):
         criterion = torch.nn.MSELoss()
         sample_sv_num = graph.svds.shape[0]
         sampled_svds = None
-        for ai in range(self.num_tie):
+        for ai in range(self.num_unit):
             cur_rows, cur_cols, cur_vals = self.save_sample[ai].row, self.save_sample[ai].col, self.save_sample[ai].data
             cur_k = self.intermediate_klist[ai]
             cur_num_row = self.init_row ** cur_k
