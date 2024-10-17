@@ -159,12 +159,12 @@ if __name__ == '__main__':
     
     parser.add_argument("-b", "--batch_size", action="store", default=10**6, type=int, help="number of elements generated at once")
     parser.add_argument("-e", "--max_epochs", action="store", default=100000, type=int, help="maximum number of training iteration")
-    parser.add_argument("-se", "--save_epoch", action="store", default=100000, type=int, help="period of sampling from HyperK during training") 
-    parser.add_argument("-si", "--save_iter", action="store", default=1, type=int, help="iteration of sampling from HyperK")
+    parser.add_argument("-se", "--save_epoch", action="store", default=100000, type=int, help="period of sampling from HyRec during training") 
+    parser.add_argument("-si", "--save_iter", action="store", default=1, type=int, help="iteration of sampling from HyRec")
     parser.add_argument("-lr", "--lr", action="store", default=1e-2, type=float, help="learning rate")
     parser.add_argument("-sld", "--sizelambda", action="store", default=0.0, type=float, help="weight for the size loss")
     parser.add_argument("-dld", "--deglambda", action="store", default=0.0, type=float, help="weight for the degree loss")
-    parser.add_argument("-nt", "--num_tie", action="store", default=1, type=int, help="")
+    parser.add_argument("-nt", "--num_unit", action="store", default=1, type=int, help="")
     
     parser.add_argument("--recalculateflag", action="store_true", help="retrain the model eventhough it is already trained")
     parser.add_argument("--extflag", action="store_true", help="used for extrapolation")
@@ -193,7 +193,7 @@ if __name__ == '__main__':
         tmp = args.load_path.split("/")[-2].split("_")
         args.init_row = int(tmp[0])
         args.init_col = int(tmp[1])
-        args.num_tie = int(tmp[4])
+        args.num_unit = int(tmp[4])
         prev_k = int(tmp[2])
         args.k = max(math.ceil(math.log(hgraph.num_row) / math.log(args.init_row)), math.ceil(math.log(hgraph.num_col) / math.log(args.init_col)))
         if args.extflag and prev_k == args.k:
@@ -218,8 +218,8 @@ if __name__ == '__main__':
         args.k = max(math.ceil(math.log(hgraph.num_row) / math.log(args.init_row)), math.ceil(math.log(hgraph.num_col) / math.log(args.init_col)))
         assert args.init_row ** args.k >= hgraph.num_row
         assert args.init_col ** args.k >= hgraph.num_col
-    if args.k < args.num_tie:
-        sys.exit("Not Valid K and num_tie")
+    if args.k < args.num_unit:
+        sys.exit("Not Valid K and num_unit")
         
     print(f'k: {args.k}, init row: {args.init_row}, init col: {args.init_col}')
     args.init_row_k = args.init_row ** args.k
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     
     if len(args.save_path) == 0 and len(args.load_path) == 0:
         args.save_path = f"./result/{args.dataset}/"
-        args.save_path += f"{args.init_row}_{args.init_col}_{args.k}_" + "%.3f_%d_%.5f_sl%.4f_dl%.4f/" % (args.lr, args.num_tie, args.annealrate, args.sizelambda, args.deglambda)
+        args.save_path += f"{args.init_row}_{args.init_col}_{args.k}_" + "%.3f_%d_%.5f_sl%.4f_dl%.4f/" % (args.lr, args.num_unit, args.annealrate, args.sizelambda, args.deglambda)
         args.load_path = args.save_path
         if os.path.isdir(args.save_path) is False:
             if args.action == "train":
@@ -240,14 +240,14 @@ if __name__ == '__main__':
             args.save_path = args.load_path
         else:
             args.save_path += f"{args.dataset}/"
-            args.save_path += f"{args.init_row}_{args.init_col}_{args.k}_" + "%.3f_%d_%.5f_sl%.4f_dl%.4f/" % (args.lr, args.num_tie, args.annealrate, args.sizelambda, args.deglambda)
+            args.save_path += f"{args.init_row}_{args.init_col}_{args.k}_" + "%.3f_%d_%.5f_sl%.4f_dl%.4f/" % (args.lr, args.num_unit, args.annealrate, args.sizelambda, args.deglambda)
         if args.extflag:
             args.save_path += "full/"
         if os.path.isdir(args.save_path) is False:
             os.makedirs(args.save_path)
             
     # ---------------------------------------------------------------------------------
-    model = SingFit(args.init_row, args.init_col, args.k, device, hgraph.sq_sum, args.num_tie, args.save_path)
+    model = SingFit(args.init_row, args.init_col, args.k, device, hgraph.sq_sum, args.num_unit, args.save_path)
     if len(args.device) > 1:
         model = nn.DataParallel(model, device_ids = args.device)
     model = model.to(device)
