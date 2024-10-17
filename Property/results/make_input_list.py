@@ -22,17 +22,17 @@ if len(args.dataname) > 0:
     datalist = [args.dataname]
 
 for dataname in datalist:
-    outputshfile = f"../run/run_eval_HyperK_{dataname}.sh"
+    outputshfile = f"../run/run_eval_HyRec_{dataname}.sh"
     if os.path.isfile(outputshfile):
         os.remove(outputshfile)
     with open(outputshfile, "w") as f:
         f.write("cd ..\n")
 
-    outputfile = "./HyperK/{}/output_list.txt".format(dataname)
+    outputfile = "./HyRec/{}/output_list.txt".format(dataname)
     if os.path.isfile(outputfile):
         os.remove(outputfile)
-    elif os.path.isdir("./HyperK/{}/".format(dataname)) is False:
-        os.makedirs("./HyperK/{}/".format(dataname))
+    elif os.path.isdir("./HyRec/{}/".format(dataname)) is False:
+        os.makedirs("./HyRec/{}/".format(dataname))
     with open(outputfile, "w") as f:
         f.write("modelIndex,modelpath\n")
 
@@ -62,9 +62,9 @@ for dataname in datalist:
                     sample_vals.append(1.0)
                     hypergraph[i].append(j)
 
-            curpath = "./HyperK/{}/{}/hypergraph".format(dataname, output_count)
-            if os.path.isdir("./HyperK/{}/{}/".format(dataname, output_count)) is False:
-                os.makedirs("./HyperK/{}/{}/".format(dataname, output_count))
+            curpath = "./HyRec/{}/{}/hypergraph".format(dataname, output_count)
+            if os.path.isdir("./HyRec/{}/{}/".format(dataname, output_count)) is False:
+                os.makedirs("./HyRec/{}/{}/".format(dataname, output_count))
             with open(curpath + ".txt", "w") as f:
                 for hedgeidx in hypergraph.keys():
                     hedge = hypergraph[hedgeidx]
@@ -74,11 +74,11 @@ for dataname in datalist:
                     numhedge += 1
 
             if numhedge > 0:
-                curpath = "./results/HyperK/{}/{}/hypergraph".format(dataname, output_count)
+                curpath = "./results/HyRec/{}/{}/hypergraph".format(dataname, output_count)
                 with open(outputshfile, "+a") as f:
-                    f.write("./bin/Evaluation --inputpath {} --outputdir ./results/HyperK/{}/{}/ --dupflag\n".format(curpath, dataname, output_count))
+                    f.write("./bin/Evaluation --inputpath {} --outputdir ./results/HyRec/{}/{}/ --dupflag\n".format(curpath, dataname, output_count))
                     f.write("cd src\n")
-                    f.write("python calculation_helper.py --inputpath .{} --outputdir ../results/HyperK/{}/{}/ --sv --effdiam --dupflag\n".format(curpath, dataname, output_count))
+                    f.write("python calculation_helper.py --inputpath .{} --outputdir ../results/HyRec/{}/{}/ --sv --effdiam --dupflag\n".format(curpath, dataname, output_count))
                     f.write("cd ../\n")
                 with open(outputfile, "+a") as f:
                     f.write("%d,%s\n" % (output_count, rootdir + dataname + "/" + dirname + "/"))
