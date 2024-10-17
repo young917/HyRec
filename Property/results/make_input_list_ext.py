@@ -46,9 +46,9 @@ def readwrite(curpath, dataname, count, outputshfile):
     if errorflag:
         return -1
 
-    curpath = "./ext_HyperK/{}/{}/hypergraph".format(dataname, count)
-    if os.path.isdir("./ext_HyperK/{}/{}/".format(dataname, count)) is False:
-        os.makedirs("./ext_HyperK/{}/{}/".format(dataname, count))
+    curpath = "./ext_HyRec/{}/{}/hypergraph".format(dataname, count)
+    if os.path.isdir("./ext_HyRec/{}/{}/".format(dataname, count)) is False:
+        os.makedirs("./ext_HyRec/{}/{}/".format(dataname, count))
     with open(curpath + ".txt", "w") as f:
         for hedgeidx in hypergraph.keys():
             hedge = hypergraph[hedgeidx]
@@ -57,11 +57,11 @@ def readwrite(curpath, dataname, count, outputshfile):
             f.write(",".join(hedge) + "\n")
             numhedge += 1
 
-    curpath = "./results/ext_HyperK/{}/{}/hypergraph".format(dataname, count)
+    curpath = "./results/ext_HyRec/{}/{}/hypergraph".format(dataname, count)
     with open(outputshfile, "+a") as f:
-        f.write("./bin/Evaluation --inputpath {} --outputdir ./results/ext_HyperK/{}/{}/ --dupflag\n".format(curpath, dataname, count))
+        f.write("./bin/Evaluation --inputpath {} --outputdir ./results/ext_HyRec/{}/{}/ --dupflag\n".format(curpath, dataname, count))
         f.write("cd src\n")
-        f.write("python calculation_helper.py --inputpath .{} --outputdir ../results/ext_HyperK/{}/{}/ --sv --effdiam --dupflag --appxflag\n".format(curpath, dataname, count))
+        f.write("python calculation_helper.py --inputpath .{} --outputdir ../results/ext_HyRec/{}/{}/ --sv --effdiam --dupflag --appxflag\n".format(curpath, dataname, count))
         f.write("cd ../\n")
 
     return numhedge
@@ -75,32 +75,32 @@ if len(args.dataname) > 0:
     datalist = [args.dataname]
 
 for dataname in datalist:
-    outputshfile_half = f"../run/run_eval_ext_HyperK_{dataname}.sh"
+    outputshfile_half = f"../run/run_eval_ext_HyRec_{dataname}.sh"
     if os.path.isfile(outputshfile_half):
         os.remove(outputshfile_half)
     with open(outputshfile_half, "w") as f:
         f.write("cd ..\n")
     full_dataname = fulldatalist[dataname]
-    outputshfile_ext = f"../run/run_eval_ext_HyperK_{full_dataname}.sh"
+    outputshfile_ext = f"../run/run_eval_ext_HyRec_{full_dataname}.sh"
     if os.path.isfile(outputshfile_ext):
         os.remove(outputshfile_ext)
     with open(outputshfile_ext, "w") as f:
         f.write("cd ..\n")
 
-    outputfile_half = "./ext_HyperK/{}/output_list_half.txt".format(dataname)
+    outputfile_half = "./ext_HyRec/{}/output_list_half.txt".format(dataname)
     if os.path.isfile(outputfile_half):
         os.remove(outputfile_half)
-    elif os.path.isdir("./ext_HyperK/{}/".format(dataname)) is False:
-        os.makedirs("./ext_HyperK/{}/".format(dataname))
+    elif os.path.isdir("./ext_HyRec/{}/".format(dataname)) is False:
+        os.makedirs("./ext_HyRec/{}/".format(dataname))
     with open(outputfile_half, "w") as f:
         f.write("modelIndex,modelpath,dirIndex\n")
 
     full_dataname = fulldatalist[dataname]
-    outputfile_ext = "./ext_HyperK/{}/output_list_ext.txt".format(full_dataname)
+    outputfile_ext = "./ext_HyRec/{}/output_list_ext.txt".format(full_dataname)
     if os.path.isfile(outputfile_ext):
         os.remove(outputfile_ext)
-    elif os.path.isdir("./ext_HyperK/{}/".format(full_dataname)) is False:
-        os.makedirs("./ext_HyperK/{}/".format(full_dataname))
+    elif os.path.isdir("./ext_HyRec/{}/".format(full_dataname)) is False:
+        os.makedirs("./ext_HyRec/{}/".format(full_dataname))
     with open(outputfile_ext, "w") as f:
         f.write("modelIndex,modelpath,dirIndex\n")
 
