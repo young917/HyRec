@@ -1,6 +1,6 @@
 # Kronecker Generative Models for Power Law Patterns in Real-World Hypergraphs
 
-We provide datasets and source code for (1) **Discoveries** of log-logistic or power-law patterns in real-world hypergraphs and (2) **HyRec** which is a hypergraph generator based on kronecker product and **SingFit** for estimating initiator
+We provide datasets and source code for (1) **Discoveries** of log-logistic or power-law patterns in real-world hypergraphs and (2) **HyRec** which is a hypergraph generator based on kronecker product and **SingFit** for estimating initiator,described in the paper: Kronecker Generative Models for Power Law Patterns in Real-World Hypergraphs, Minyoung Choe, Jihoon Ko, Taehyung Kwon, Kijung Shin, Christos Faloutsos, WWW 2025.
 
 ```
 # File Organization
